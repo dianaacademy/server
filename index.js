@@ -12,6 +12,7 @@ const LoginsModel = require('./models/Logins');
 const CalendarModel = require('./models/Calendar');
 const DocumentsModel = require('./models/Document');
 const CampaignModel = require('./models/Campaign');
+const EnrollusersModel = require('./models/EnrollUsers');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const Papa = require('papaparse');
@@ -279,6 +280,54 @@ app.get('/instructor', (req, res) => {
   .catch(err => res.json(err))
 })
 
+// Instructor Update data
+app.put('/instructor/update/:id', async (req, res) => {
+  try {
+    const instructorId = req.params.id;
+    const updatedinstructorData = req.body;
+
+    const updatedinstructor = await InstructorModel.findByIdAndUpdate(instructorId, updatedinstructorData, { new: true });
+
+    if (!updatedinstructor) {
+      return res.status(404).send('User not found');
+    }
+
+    res.json(updatedinstructor);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Instructor Delete data
+app.delete('/instructor/delete/:id', async (req, res) => {
+  try {
+    const instructorId = req.params.id;
+    
+    const deletedinstructor = await InstructorModel.findByIdAndDelete(instructorId);
+    
+    if (!deletedinstructor) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(deletedinstructor);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+//instructor Add Data
+
+app.post("/instructorandtrainer", (req,res) => {
+  InstructorModel.create(req.body)
+  .then(Instructors => res.json(Instructors))
+  .catch(err => res.json(err))
+})
+
+
+
+
+
 //Support Fetch Data
 
 app.get('/support', (req, res) => {
@@ -287,6 +336,44 @@ app.get('/support', (req, res) => {
   .catch(err => res.json(err))
 })
 
+//Support Update Data
+
+app.put('/support/update/:id', async (req, res) => {
+  try {
+    const supportId = req.params.id;
+    const updatedsupportData = req.body;
+
+    const updatedsupport = await SupportModel.findByIdAndUpdate(supportId, updatedsupportData, { new: true });
+
+    if (!updatedsupport) {
+      return res.status(404).send('User not found');
+    }
+
+    res.json(updatedsupport);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//Support Delete Data
+
+app.delete('/support/delete/:id', async (req, res) => {
+  try {
+    const supportId = req.params.id;
+    
+    const deletedsupport = await SupportModel.findByIdAndDelete(supportId);
+    
+    if (!deletedsupport) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(deletedsupport);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 //LMS Login Fetch Data
 
 app.get('/login', (req, res) => {
@@ -294,6 +381,47 @@ app.get('/login', (req, res) => {
   .then(logins => res.json(logins))
   .catch(err => res.json(err))
 })
+
+//LMS Login Update Data
+
+
+app.put('/login/update/:id', async (req, res) => {
+  try {
+    const loginsId = req.params.id;
+    const updatedloginsData = req.body;
+    
+    const updatedlogins = await LoginsModel.findByIdAndUpdate(loginsId, updatedloginsData, { new: true });
+    
+    if (!updatedlogins) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(updatedlogins);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//LMS Login Delete Data
+
+app.delete('/login/delete/:id', async (req, res) => {
+  try {
+    const loginsId = req.params.id;
+    
+    const deletedlogins = await LoginsModel.findByIdAndDelete(loginsId);
+    
+    if (!deletedlogins) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(deletedlogins);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 //calenders Fetch data
 app.get('/calendar', (req, res) => {
@@ -318,6 +446,50 @@ app.get('/campaigns', (req, res) => {
   .catch(err => res.json(err))
 })
 
+//Enrollment and Registration Data Fetch
+
+app.get('/enrollusers', (req, res) => {
+  EnrollusersModel.find({})
+  .then(enrollusers => res.json(enrollusers))
+  .catch(err => res.json(err))
+})
+
+app.put('/enrollusers/update/:id', async (req, res) => {
+  try {
+    const enrollusersId = req.params.id;
+    const updatedenrollusersIdData = req.body;
+    
+    const updatedenrollusers = await EnrollusersModel.findByIdAndUpdate(enrollusersId, updatedenrollusersIdData, { new: true });
+    
+    if (!updatedenrollusers) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(updatedenrollusers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//Enrollment and Registration Delete Users
+
+app.delete('/enrollusers/delete/:id', async (req, res) => {
+  try {
+    const enrollusersId = req.params.id;
+    
+    const deletedenrollusers = await EnrollusersModel.findByIdAndDelete(enrollusersId);
+    
+    if (!deletedenrollusers) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(deletedenrollusers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 
 

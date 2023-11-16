@@ -12,7 +12,11 @@ const TutorSchema = new mongoose.Schema({
     ShiftTimings : String,
     Location : String,
     DateAdded : String,
-    InstructorID : String,
+    InstructorID: {
+        type: Number,
+        unique: true,
+        required: true,
+      },
     StatusBg : String,
     InstructorImage : String,
 });
