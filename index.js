@@ -430,6 +430,77 @@ app.get('/calendar', (req, res) => {
   .catch(err => res.json(err))
 })
 
+//calenders Update Data
+
+
+app.put('/Calendar/update/:id', async (req, res) => {
+  try {
+    const calendarId = req.params.id;
+    const updatedcalendarData = req.body;
+    
+    const updatedcalendar = await CalendarModel.findByIdAndUpdate(calendarId, updatedcalendarData, { new: true });
+    
+    if (!updatedcalendar) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(updatedcalendar);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+//calenders Delete Data
+
+app.delete('/Calendar/delete/:id', async (req, res) => {
+  try {
+    const calendarId = req.params.id;
+    
+    const deletedcalendar = await CalendarModel.findByIdAndDelete(calendarId);
+    
+    if (!deletedcalendar) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(deletedcalendar);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//calendar upload data
+
+app.post('/Calendar/upload', upload.single('file'), async (req, res) => {
+  try {
+    const csvData = req.file.buffer.toString('utf8');
+    // Parse CSV data
+    const parseResults = await new Promise((resolve) => {
+      Papa.parse(csvData, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        complete: (results) => resolve(results),
+      });
+    });
+
+    const calendarData = parseResults.data;
+
+    // Save each client to the ClientsModel
+    for (const calendar of calendarData) {
+      await CalendarModel.create(calendar);
+    }
+
+    console.log('CSV data saved to /clients database');
+    res.status(200).json({ message: 'CSV data uploaded and saved to /clients database' });
+  } catch (error) {
+    console.error('Error processing CSV file:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 //Documents Retrive Data
 
 app.get('/documents', (req, res) => {
