@@ -13,6 +13,8 @@ const CalendarModel = require('./models/Calendar');
 const DocumentsModel = require('./models/Document');
 const CampaignModel = require('./models/Campaign');
 const EnrollusersModel = require('./models/EnrollUsers');
+const HiringModel = require('./models/Hiring');
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const Papa = require('papaparse');
@@ -556,6 +558,59 @@ app.delete('/enrollusers/delete/:id', async (req, res) => {
     }
     
     res.json(deletedenrollusers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
+//Hiring 
+
+//Hiring Fetch data
+app.get('/hirings', (req, res) => {
+  HiringModel.find({})
+  .then(hiring => res.json(hiring))
+  .catch(err => res.json(err))
+})
+
+//calenders Update Data
+
+
+app.put('/hirings/update/:id', async (req, res) => {
+  try {
+    const hiringId = req.params.id;
+    const updatedhiringData = req.body;
+    
+    const updatedhiring = await HiringModel.findByIdAndUpdate(hiringId, updatedhiringData, { new: true });
+    
+    if (!updatedhiring) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(updatedhiring);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+//calenders Delete Data
+
+app.delete('/Calendar/delete/:id', async (req, res) => {
+  try {
+    const calendarId = req.params.id;
+    
+    const deletedcalendar = await CalendarModel.findByIdAndDelete(calendarId);
+    
+    if (!deletedcalendar) {
+      return res.status(404).send('User not found');
+    }
+    
+    res.json(deletedcalendar);
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
