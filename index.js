@@ -1,8 +1,8 @@
-const express = require ('express')
-const mongoose = require('mongoose')
-const cors = require('cors')
-const multer = require('multer')
-const UserModel = require ('./models/Users')
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const multer = require('multer');
+const UserModel = require('./models/Users');
 const ClientsModel = require('./models/Clients');
 const LeadsModel = require('./models/Leads');
 const InstructorModel = require ('./models/Instructor');
@@ -19,19 +19,22 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const Papa = require('papaparse');
 
+const app = express();
+app.use(cors());
+app.use(express.json());
 
+// Updated connection string
+const uri = "mongodb+srv://seodianaacademy:dianatechweb@dcm.r6gslwi.mongodb.net/DCM?retryWrites=true&w=majority";
 
-const app = express()
-app.use(cors())
-app.use(express.json())
-mongoose.connect("mongodb://127.0.0.1:27017/DCM")
+mongoose.connect(uri)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("Could not connect to MongoDB:", err));
 
 app.get('/', (req, res) => {
-    UserModel.find({})
+  UserModel.find({})
     .then(users => res.json(users))
-    .catch(err => res.json(err))
-})
-
+    .catch(err => res.status(500).json({ error: err.message }));
+});
 
 
 //upload CSV File to Server Start
@@ -617,8 +620,7 @@ app.delete('/Calendar/delete/:id', async (req, res) => {
   }
 });
 
-
-
-app.listen(3001, () =>{
-    console.log("server is running")
-})
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
