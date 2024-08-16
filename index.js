@@ -27,7 +27,7 @@ const app = express();
 // app.use(express.json());
 
 app.use(cors({
-  origin: 'http://localhost:3000', // or your frontend URL
+  origin: 'https://server-beta-wheat-43.vercel.app', // or your frontend URL
   credentials: true
 }));
 app.use(express.json());
