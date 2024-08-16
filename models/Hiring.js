@@ -17,6 +17,8 @@ const hiringSchema = new mongoose.Schema({
     updated : String,
     interviewround : String,
     candidateID : String,
+    program:String,
+    followupstatus:String, 
 });
 
 const HiringModel = mongoose.model('hirings', hiringSchema);

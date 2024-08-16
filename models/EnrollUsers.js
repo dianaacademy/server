@@ -17,6 +17,8 @@ const enrollusersSchema = new mongoose.Schema({
     CourseID : String,
     Location : String,
     UpdatedDate : String,
+    program:String,
+    followupstatus:String, 
 });
 
 const EnrollusersModel = mongoose.model('Enrollusers', enrollusersSchema);

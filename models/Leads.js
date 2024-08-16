@@ -12,6 +12,11 @@ const leadsSchema = new mongoose.Schema({
     ClientsID : String, 
     UpdatedDate : String, 
     TypeofDelegate : String,
+    program:String,
+    followupstatus:String, 
+    Contact:String, 
+    Email:String, 
+    ClientID:String, 
 });
 
 const LeadsModel = mongoose.model('Leads', leadsSchema);

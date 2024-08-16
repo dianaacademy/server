@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const multer = require('multer');
+const session = require('express-session');
 const UserModel = require('./models/Users');
 const ClientsModel = require('./models/Clients');
 const LeadsModel = require('./models/Leads');
@@ -14,14 +15,28 @@ const DocumentsModel = require('./models/Document');
 const CampaignModel = require('./models/Campaign');
 const EnrollusersModel = require('./models/EnrollUsers');
 const HiringModel = require('./models/Hiring');
+const CredsModel = require('./models/Creds');
+
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const Papa = require('papaparse');
 
 const app = express();
-app.use(cors());
+// app.use(cors());
+// app.use(express.json());
+
+app.use(cors({
+  origin: 'http://localhost:3000', // or your frontend URL
+  credentials: true
+}));
 app.use(express.json());
+app.use(session({
+  secret: 'webgon',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+}));
 
 // Updated connection string
 const uri = "mongodb+srv://seodianaacademy:dianatechweb@dcm.r6gslwi.mongodb.net/DCM?retryWrites=true&w=majority";
@@ -97,6 +112,72 @@ app.post('/leads/upload', upload.single('file'), async (req, res) => {
     console.error('Error processing CSV file:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+
+
+
+//login function
+
+
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await CredsModel.findOne({ Email: email });
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+    
+    if (password !== user.Password) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    req.session.userId = user._id;
+    res.json({ message: 'Logged in successfully' });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Check auth status route
+app.get('/api/check-auth', (req, res) => {
+  if (req.session.userId) {
+    res.json({ isAuthenticated: true });
+  } else {
+    res.json({ isAuthenticated: false });
+  }
+});
+
+// Logout route
+app.post('/api/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Could not log out, please try again' });
+    }
+    res.json({ message: 'Logged out successfully' });
+  });
+});
+
+// Middleware to check if user is authenticated
+const isAuthenticated = (req, res, next) => {
+  if (req.session.userId) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Unauthorized' });
+  }
+};
+
+// Example protected route
+app.get('/api/protected', isAuthenticated, (req, res) => {
+  res.json({ message: 'This is a protected route' });
+});
+
+// Apply isAuthenticated middleware to your existing routes
+app.get('/creds', isAuthenticated, (req, res) => {
+  CredsModel.find({})
+    .then(cred => res.json(cred))
+    .catch(err => res.json(err));
 });
 
 
@@ -619,6 +700,16 @@ app.delete('/Calendar/delete/:id', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+
+
+
+//login Fetch data
+app.get('/creds', (req, res) => {
+  CredsModel.find({})
+  .then(cred => res.json(cred))
+  .catch(err => res.json(err))
+})
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

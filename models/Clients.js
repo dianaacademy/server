@@ -14,6 +14,8 @@ const clientsSchema = new mongoose.Schema({
     ClientsID : String, 
     UpdatedDate : String, 
     TypeofDelegate : String,
+    program:String,
+    followupstatus:String, 
 });
 
 const ClientsModel = mongoose.model('Clients', clientsSchema);

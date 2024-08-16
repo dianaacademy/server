@@ -16,6 +16,8 @@ const instructorSchema = new mongoose.Schema({
     InstructorID : String,
     StatusBg : String,
     InstructorImage : String,
+    program:String,
+    followupstatus:String, 
 });
 
 const InstructorModel = mongoose.model('Instructor', instructorSchema);
