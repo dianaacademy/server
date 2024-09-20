@@ -26,8 +26,20 @@ const app = express();
 // app.use(cors());
 // app.use(express.json());
 
+const allowedOrigins = ['https://dcm2.vercel.app', 'https://dcm2-58xoh5hz6-dianaacademys-projects.vercel.app', 'https://client.dianalearningportal.com'];
+
 app.use(cors({
-  origin: 'https://server-beta-wheat-43.vercel.app', // or your frontend URL
+  origin: (origin, callback) => {
+    // If no origin is present (for example in certain scenarios like Postman requests), allow the request
+    if (!origin) return callback(null, true);
+
+    // Check if the incoming request's origin is in the allowedOrigins array
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
@@ -711,7 +723,7 @@ app.get('/creds', (req, res) => {
   .catch(err => res.json(err))
 })
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
