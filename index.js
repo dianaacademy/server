@@ -26,7 +26,7 @@ const app = express();
 // app.use(cors());
 // app.use(express.json());
 
-const allowedOrigins = ['https://dcm2.vercel.app', 'https://dcm2-58xoh5hz6-dianaacademys-projects.vercel.app', 'https://client.dianalearningportal.com'];
+const allowedOrigins = ['https://dcm2.vercel.app', 'https://dcm2-58xoh5hz6-dianaacademys-projects.vercel.app', 'https://client.dianalearningportal.com' , 'https://dcm.dianasentinel.com'];
 
 app.use(cors({
   origin: (origin, callback) => {
